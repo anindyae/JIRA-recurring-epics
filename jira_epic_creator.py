@@ -532,6 +532,48 @@ def preview(ctx, template_name, month, year):
         console.print(f"[red]Error:[/red] {str(e)}")
 
 
+def print_success_summary(results: List[Dict], config: Config, month: int, year: int, dry_run: bool = False):
+    """Print a nice summary of created epics with JIRA URLs."""
+    if not results:
+        return
+    
+    month_suffix = date(year, month, 1).strftime("%b'%y")
+    base_url = config.jira_server.rstrip('/')
+    
+    console.print()
+    console.print("=" * 60)
+    if dry_run:
+        console.print(f"[bold blue]DRY RUN - Epics that would be created for {month_suffix}[/bold blue]")
+    else:
+        console.print(f"[bold green]✓ Epics created for {month_suffix}[/bold green]")
+    console.print("=" * 60)
+    console.print()
+    
+    # Define friendly names for templates
+    friendly_names = {
+        "cc-gantt-meetings": "Meetings - CC Gantt",
+        "cc-gantt-test-setup": "Test Setup and Documentation - CC Gantt",
+        "cc-gantt-qa-tasks": "QA Tasks - CC Gantt",
+        "cc-gantt-automation-tasks": "Automation Tasks - CC Gantt",
+    }
+    
+    for result in results:
+        epic = result.get("epic", {})
+        template = result.get("template", "")
+        key = epic.get("key", "N/A")
+        
+        name = friendly_names.get(template, epic.get("summary", template))
+        
+        if dry_run:
+            console.print(f"  {name}: [dim](dry run)[/dim]")
+        else:
+            url = f"{base_url}/browse/{key}"
+            console.print(f"  {name}: [cyan]{url}[/cyan]")
+    
+    console.print()
+    console.print("=" * 60)
+
+
 @cli.command()
 @click.option("--templates", "-t", multiple=True, help="Template names to create")
 @click.option("--month", type=int, help="Month number (1-12). Defaults to current.")
@@ -545,6 +587,11 @@ def create(ctx, templates, month, year, force, no_close_previous, yes):
     try:
         creator = EpicCreator(dry_run=ctx.obj["dry_run"])
         template_names = list(templates) if templates else None
+        
+        # Determine actual month/year for summary
+        now = datetime.now()
+        actual_month = month or now.month
+        actual_year = year or now.year
         
         results = creator.create_monthly_epics(
             template_names=template_names,
@@ -574,8 +621,8 @@ def create(ctx, templates, month, year, force, no_close_previous, yes):
                 skip_if_exists=not force, close_previous=not no_close_previous, confirmed=True
             )
         
-        if isinstance(results, list):
-            console.print(f"\n[bold green]Created {len(results)} epic(s)[/bold green]")
+        if isinstance(results, list) and results:
+            print_success_summary(results, creator.config, actual_month, actual_year, ctx.obj["dry_run"])
     
     except ValueError as e:
         console.print(f"[red]Configuration error:[/red] {str(e)}")

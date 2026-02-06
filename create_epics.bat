@@ -47,8 +47,7 @@ if exist ".venv\Scripts\python.exe" (
     python jira_epic_creator.py %*
 )
 
-REM Keep window open if double-clicked (check if running in interactive mode)
+REM Always keep window open until user presses a key
 echo.
-if /i "%CMDCMDLINE:"=%" == "%COMSPEC% " (
-    pause
-)
+echo Press any key to close...
+pause > nul
