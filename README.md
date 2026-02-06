@@ -9,7 +9,7 @@ A simple utility to automatically create recurring JIRA epics with minimal input
 - 📅 **Working day dates** - Start/end dates set to first/last working days
 - 🔒 **Auto-close previous** - Previous month's epics closed automatically
 - ⚠️ **Duplicate protection** - Warns if epics already exist for the month
-- 🔍 **Dry-run mode** - Preview before creating
+- �️ **Easy to use** - Just double-click the batch file
 
 ## Quick Start
 
@@ -43,21 +43,30 @@ create_epics.bat test-connection
 
 ### 4. Create Epics
 
-```batch
-REM Create all CC Gantt epics for current month
-create_epics.bat create -t cc-gantt-meetings -t cc-gantt-test-setup -t cc-gantt-qa-tasks -t cc-gantt-automation-tasks
+**Option A: Double-click** (Easiest)
 
-REM Or preview first (dry run)
-create_epics.bat --dry-run create -t cc-gantt-meetings -t cc-gantt-test-setup -t cc-gantt-qa-tasks -t cc-gantt-automation-tasks
+Just double-click `create_epics.bat` and select from the menu:
+
+```
+[1] Create CC Gantt epics for current month
+[2] List available templates
+[3] Test JIRA connection
+[4] Exit
+```
+
+**Option B: Command line**
+
+```batch
+create_epics.bat create -t cc-gantt-meetings -t cc-gantt-test-setup -t cc-gantt-qa-tasks -t cc-gantt-automation-tasks
 ```
 
 ## Commands
 
 | Command | Description |
 |---------|-------------|
-| `create_epics.bat create` | Create epics (prompts if duplicates exist) |
+| `create_epics.bat` | Open interactive menu (double-click) |
+| `create_epics.bat create -t <template>` | Create epics (prompts if duplicates exist) |
 | `create_epics.bat create -y` | Create without confirmation |
-| `create_epics.bat --dry-run create` | Preview what will be created |
 | `create_epics.bat create --month 3 --year 2026` | Create for specific month |
 | `create_epics.bat create --no-close-previous` | Don't close previous month's epics |
 | `create_epics.bat list-templates` | Show available templates |
@@ -74,7 +83,6 @@ create_epics.bat --dry-run create -t cc-gantt-meetings -t cc-gantt-test-setup -t
 | `--force` | Create even if epic with same name exists |
 | `--no-close-previous` | Don't auto-close previous month's epics |
 | `-y, --yes` | Skip confirmation prompts |
-| `--dry-run` | Preview without creating |
 
 ## CC Gantt Epics
 
@@ -134,7 +142,9 @@ JIRA-recurring-epics/
 
 ## Monthly Workflow
 
-Each month, just run:
+Each month, just double-click `create_epics.bat` and press `1` to create epics.
+
+Or run from command line:
 
 ```batch
 create_epics.bat create -t cc-gantt-meetings -t cc-gantt-test-setup -t cc-gantt-qa-tasks -t cc-gantt-automation-tasks
@@ -144,6 +154,7 @@ This will:
 1. ✅ Close previous month's CC Gantt epics
 2. ✅ Create 4 new epics for current month
 3. ✅ Set start/end dates to working days
+4. ✅ Show summary with JIRA links to copy
 
 ## Troubleshooting
 
