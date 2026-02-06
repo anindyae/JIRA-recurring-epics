@@ -1,0 +1,45 @@
+# CC Gantt Monthly Recurring Epics
+# =================================
+# These epics are created monthly for CC Gantt project tracking
+
+templates:
+  # Meetings Epic
+  - name: cc-gantt-meetings
+    summary: "Meetings - CC Gantt - {month_short}'{year_short}"
+    description: |
+      Time spent in Calls and Discussions by CC Gantt team.
+    labels:
+      - QA_Tasks
+      - recurring
+    priority: Medium
+
+  # Test Setup and Documentation Epic
+  - name: cc-gantt-test-setup
+    summary: "Test Setup and Documentation - CC Gantt - {month_short}'{year_short}"
+    description: |
+      Time spent in Build generation, build installation, code setup updates.
+      Time spent in creation and updates of test case and other documentations (release notes, requirement document etc.).
+    labels:
+      - QA_Tasks
+      - recurring
+    priority: Medium
+
+  # QA Tasks Epic
+  - name: cc-gantt-qa-tasks
+    summary: "QA Tasks - CC Gantt - {month_short}'{year_short}"
+    description: |
+      Epic to track all manual QA Tasks (related to feature testing/bug verification etc) in CC Gantt project.
+    labels:
+      - QA_Tasks
+      - recurring
+    priority: High
+
+  # Automation Tasks Epic
+  - name: cc-gantt-automation-tasks
+    summary: "Automation Tasks - CC Gantt - {month_short}'{year_short}"
+    description: |
+      Epic to track automation tasks worked on by the CC Gantt team.
+    labels:
+      - QA_Tasks
+      - recurring
+    priority: High
