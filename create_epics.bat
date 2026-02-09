@@ -6,31 +6,34 @@ REM ============================================
 cd /d "%~dp0"
 
 REM Check if no arguments provided (double-clicked) - show interactive menu
-if "%~1"=="" (
-    :menu
-    cls
-    echo.
-    echo =============================================
-    echo   JIRA Recurring Epic Creator
-    echo =============================================
-    echo.
-    echo   [1] Create CC Gantt epics for current month
-    echo   [2] List available templates
-    echo   [3] Test JIRA connection
-    echo   [4] Exit
-    echo.
-    echo =============================================
-    set /p choice="Select an option (1-4): "
-    
-    if "%choice%"=="1" goto :create_epics
-    if "%choice%"=="2" goto :list_templates
-    if "%choice%"=="3" goto :test_connection
-    if "%choice%"=="4" exit /b 0
-    
-    echo Invalid choice. Please try again.
-    timeout /t 2 > nul
-    goto :menu
-)
+if "%~1"=="" goto :menu
+goto :run_command
+
+:menu
+cls
+echo.
+echo =============================================
+echo   JIRA Recurring Epic Creator
+echo =============================================
+echo.
+echo   [1] Create CC Gantt epics for current month
+echo   [2] List available templates
+echo   [3] Test JIRA connection
+echo   [4] Exit
+echo.
+echo =============================================
+set /p choice="Select an option (1-4): "
+
+if "%choice%"=="1" goto :create_epics
+if "%choice%"=="2" goto :list_templates
+if "%choice%"=="3" goto :test_connection
+if "%choice%"=="4" exit /b 0
+
+echo Invalid choice. Please try again.
+timeout /t 2 > nul
+goto :menu
+
+:run_command
 
 REM Check if virtual environment exists
 if exist ".venv\Scripts\python.exe" (
