@@ -1,6 +1,6 @@
 # JIRA Recurring Epic Creator
 
-A simple utility to automatically create recurring JIRA epics with minimal input. Perfect for teams that need to create the same set of epics every month.
+A Python-based utility to automatically create recurring JIRA epics with minimal input. Perfect for teams that need to create the same set of epics every month.
 
 ## Features
 
@@ -9,7 +9,68 @@ A simple utility to automatically create recurring JIRA epics with minimal input
 - 📅 **Working day dates** - Start/end dates set to first/last working days
 - 🔒 **Auto-close previous** - Previous month's epics closed automatically
 - ⚠️ **Duplicate protection** - Warns if epics already exist for the month
-- �️ **Easy to use** - Just double-click the batch file
+- 🖱️ **Easy to use** - Just double-click the batch file
+
+## How It Works
+
+### Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    create_epics.bat                             │
+│                  (Windows Entry Point)                          │
+└─────────────────────────┬───────────────────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                  jira_epic_creator.py                           │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐   │
+│  │    Config    │  │  JiraClient  │  │   TemplateManager    │   │
+│  │ (.env loader)│  │  (API calls) │  │   (YAML parser)      │   │
+│  └──────────────┘  └──────────────┘  └──────────────────────┘   │
+│                            │                                     │
+│                  ┌─────────┴─────────┐                          │
+│                  │   EpicCreator     │                          │
+│                  │ (orchestration)   │                          │
+│                  └───────────────────┘                          │
+└─────────────────────────────────────────────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    JIRA Cloud API                               │
+│              (Atlassian REST API v3)                            │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Workflow
+
+1. **Load Configuration** - Reads JIRA credentials and project key from `.env`
+2. **Load Templates** - Parses YAML template files from `templates/` folder
+3. **Check for Duplicates** - Queries JIRA to see if epics already exist for the month
+4. **Close Previous Month** - Transitions last month's epics to "Done" status
+5. **Create New Epics** - Creates epics with auto-calculated working day dates
+6. **Display Summary** - Shows created epic URLs for easy access
+
+### Implementation Details
+
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| Runtime | Python 3.10+ | Core application logic |
+| CLI Framework | Click | Command-line interface and argument parsing |
+| JIRA Integration | jira-python | REST API communication with JIRA Cloud |
+| Configuration | python-dotenv | Secure credential management via `.env` |
+| Templates | PyYAML | Epic definitions in human-readable format |
+| Output Formatting | Rich | Colored terminal output and tables |
+
+### Key Classes
+
+| Class | Responsibility |
+|-------|----------------|
+| `Config` | Loads and validates environment variables |
+| `JiraClient` | Handles all JIRA API operations (create, search, transition) |
+| `TemplateManager` | Loads and manages epic templates from YAML files |
+| `EpicTemplate` | Represents a single epic template with variable substitution |
+| `EpicCreator` | Orchestrates the epic creation workflow |
 
 ## Quick Start
 
@@ -172,6 +233,27 @@ Create a `.env` file with your JIRA credentials. Copy from `.env.example`.
 
 ### Epics not closing
 Different JIRA workflows have different transition names. The tool tries: Done, Close, Closed, Complete, Completed, Resolve, Resolved.
+
+## Roadmap / Backlog
+
+Future enhancements planned for upcoming iterations:
+
+### Iteration 2
+
+| Feature | Description | Status |
+|---------|-------------|--------|
+| **Executable Generation** | Package as standalone `.exe` file using PyInstaller - no Python installation required | 📋 Planned |
+| **Monthly Scheduler** | Windows Task Scheduler integration for automatic monthly execution | 📋 Planned |
+| **API Token Management** | Built-in UI to create, validate, and rotate JIRA API tokens | 📋 Planned |
+| **Navsea Board Support** | Optional epic templates for Navsea/GP board (`JIRA_PROJECT_KEY=GP`) with similar structure | 📋 Planned |
+
+### Future Considerations
+
+- Multi-project support (create epics across multiple JIRA projects in one run)
+- Email/Slack notifications on epic creation
+- Web-based UI for non-technical users
+- Template inheritance and composition
+- Audit logging and history tracking
 
 ## License
 
